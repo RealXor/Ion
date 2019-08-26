@@ -4,12 +4,12 @@ use std::os::raw::c_char;
 use crate::utils;
 
 #[derive(Debug)]
-pub struct Panel {
+pub struct c_panel {
     pub base: *mut usize,
 }
 
 
-impl Panel {
+impl c_panel {
     pub unsafe fn from_raw(addr: *mut usize) -> Self {
         Self {
             base: addr,
@@ -26,7 +26,7 @@ impl Panel {
     }
 }
 
-impl Default for Panel {
+impl Default for c_panel {
     fn default() -> Self {
         Self {
             base: std::ptr::null_mut(),

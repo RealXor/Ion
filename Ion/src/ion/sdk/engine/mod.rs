@@ -9,13 +9,13 @@ type returns_bool = unsafe extern "thiscall" fn(thisptr: *mut usize) -> bool;
 
 
 #[derive(Debug)]
-pub struct Engine {
+pub struct c_engine {
     base: *mut usize,
 }
 
 use crate::utils;
 
-impl Engine {
+impl c_engine {
     pub unsafe fn from_raw(addr: *mut usize) -> Self {
         Self {
             base: addr,
@@ -47,7 +47,7 @@ impl Engine {
     }
 }
 
-impl Default for Engine {
+impl Default for c_engine {
     fn default() -> Self {
         Self {
             base: std::ptr::null_mut(),

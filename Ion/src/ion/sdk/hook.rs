@@ -38,8 +38,12 @@ unsafe extern "fastcall" fn create_move(ecx: *const c_void, edx: *const c_void, 
         return std::mem::transmute::<_, createmove_t>(hooks.lock().unwrap()[0].get_original(24))(ecx, edx, _sampleframetime, cmd);
     }
 
-    let local = get_local_player();
-   // println!("position: {:?}", local.get_origin());
+    let player = get_local_player();
+
+    if player.is_some() {
+        println!("{:?}", player.unwrap().get_bone_pos(8))
+    }
+
     false
 }
 

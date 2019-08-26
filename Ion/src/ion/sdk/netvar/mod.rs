@@ -1,6 +1,6 @@
 use crate::ion::*;
 use crate::ion::sdk::definitions;
-use crate::ion::sdk::definitions::recvprop::{c_recv_table, c_recv_prop};
+use crate::ion::sdk::definitions::recvprop::{c_recv_table, c_recv_prop, e_prop_type};
 use std::ffi::CStr;
 
 use winapi::{
@@ -32,9 +32,13 @@ pub fn store_props(group_name: String, recv_table: *mut c_recv_table, child_offs
 
             let formatted = format!("{}->{}", group_name, var_name);
 
-            if !netvars.lock().unwrap().contains_key(&var_name) {
+            if !netvars.lock().unwrap().contains_key(&var_name) && (
+                prop.prop_type == e_prop_type::Int ||
+                prop.prop_type == e_prop_type::Vec ||
+                prop.prop_type == e_prop_type::VecXY ||
+                prop.prop_type == e_prop_type::String ||
+                prop.prop_type == e_prop_type::Float) {
                 netvars.lock().unwrap().insert(formatted.to_owned(), prop.offset as usize + child_offset as usize);
-                println!("inserted {}", formatted);
             }
         }
     }

@@ -26,25 +26,27 @@ pub fn capture_interface(module: HMODULE, interface: *const u8) -> *const c_void
 
 #[derive(Debug)]
 pub struct Interfaces {
-    pub client: sdk::client::Client,
+    pub client: sdk::client::c_client,
     pub client_mode: *mut usize,
-    pub vgui_surface: sdk::surface::Surface,
-    pub vgui_panel: sdk::panel::Panel,
-    pub entity_list: sdk::entitylist::EntityList,
-    pub engine: sdk::engine::Engine,
+    pub vgui_surface: sdk::surface::c_surface,
+    pub vgui_panel: sdk::panel::c_panel,
+    pub entity_list: sdk::entitylist::c_entity_list,
+    pub engine: sdk::engine::c_engine,
     pub glow_object_manager: *const sdk::glow::glow_object_manager_t,
+    pub debug_overlay: sdk::debugoverlay::c_debugoverlay,
 }
 
 impl Default for Interfaces {
     fn default() -> Self {
         Self {
-            client: sdk::client::Client::default(),
+            client: sdk::client::c_client::default(),
             client_mode: std::ptr::null_mut(),
-            engine: sdk::engine::Engine::default(),
+            engine: sdk::engine::c_engine::default(),
             glow_object_manager: std::ptr::null_mut(),
-            vgui_panel: sdk::panel::Panel::default(),
-            entity_list: sdk::entitylist::EntityList::default(),
-            vgui_surface: sdk::surface::Surface::default(),
+            vgui_panel: sdk::panel::c_panel::default(),
+            entity_list: sdk::entitylist::c_entity_list::default(),
+            vgui_surface: sdk::surface::c_surface::default(),
+            debug_overlay: sdk::debugoverlay::c_debugoverlay::default(),
         }
     }
 }

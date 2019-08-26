@@ -5,14 +5,14 @@ use crate::ion::sdk::definitions::entity;
 use winapi::ctypes::c_void;
 
 #[derive(Debug)]
-pub struct EntityList {
+pub struct c_entity_list {
     base: *mut usize,
 }
 
 type get_entity_byid = unsafe extern "thiscall" fn(thisptr: *mut usize, id: i32) -> *mut usize;
 type get_highest_ent_index = unsafe extern "thiscall" fn(thisptr: *mut usize) -> i32;
 
-impl EntityList {
+impl c_entity_list {
     pub unsafe fn from_raw(addr: *mut usize) -> Self {
         Self {
             base: addr,
@@ -33,7 +33,7 @@ impl EntityList {
     }
 }
 
-impl Default for EntityList {
+impl Default for c_entity_list {
     fn default() -> Self {
         Self {
             base: std::ptr::null_mut(),

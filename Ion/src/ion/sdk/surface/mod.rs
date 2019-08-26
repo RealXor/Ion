@@ -49,11 +49,11 @@ type set_text_pos_fn =  unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32,
 type draw_print_text_fn =  unsafe extern "thiscall" fn(thisptr: *mut usize, text: *const u16, len: i32);
 
 #[derive(Debug)]
-pub struct Surface {
+pub struct c_surface {
     pub base: *mut usize,
 }
 
-impl Surface {
+impl c_surface {
     pub unsafe fn from_raw(addr: *mut usize) -> Self {
         Self {
             base: addr,
@@ -71,7 +71,7 @@ impl Surface {
     }
 }
 
-impl Default for Surface {
+impl Default for c_surface {
     fn default() -> Self {
         Self {
             base: std::ptr::null_mut(),

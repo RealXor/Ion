@@ -3,13 +3,13 @@ use crate::utils;
 use crate::ion::sdk::definitions;
 
 #[derive(Debug)]
-pub struct Client {
+pub struct c_client {
     pub base: *mut usize,
 }
 
 type get_all_classes_fn = unsafe extern "thiscall" fn(thisptr: *mut usize) -> *const definitions::clientclass::ClientClass;
 
-impl Client {
+impl c_client {
     pub unsafe fn from_raw(addr: *mut usize) -> Self {
         Self {
             base: addr,
@@ -23,7 +23,7 @@ impl Client {
     }
 }
 
-impl Default for Client {
+impl Default for c_client {
     fn default() -> Self {
         Self {
             base: std::ptr::null_mut(),

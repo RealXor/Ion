@@ -17,6 +17,12 @@ pub struct Vec2 {
     pub pitch: c_float,
 }
 
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct Matrix {
+    pub mat_val: [[f32; 4]; 3],
+}
+
 use std::ops;
 
 impl ops::Add<Vec3> for Vec3 {
@@ -73,6 +79,16 @@ impl Vec3 {
     pub fn empty() -> Self {
         Self {
             x: 0 as f32, y: 0 as f32, z: 0 as f32,
+        }
+    }
+}
+
+impl Matrix {
+    pub fn empty() -> Self {
+        unsafe {
+            Self {
+                mat_val: std::mem::zeroed(),
+            }
         }
     }
 }
