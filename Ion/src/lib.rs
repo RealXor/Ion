@@ -17,8 +17,8 @@ use winapi::{
         consoleapi::AllocConsole,
         libloaderapi::DisableThreadLibraryCalls,
         processthreadsapi::CreateThread,
+        wincon::SetConsoleTitleA,
         winnt::DLL_PROCESS_ATTACH,
-        winnt::{DLL_PROCESS_ATTACH},
     },
 };
 
