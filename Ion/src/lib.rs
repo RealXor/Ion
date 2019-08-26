@@ -10,23 +10,23 @@
 extern crate lazy_static;
 
 /* our modules */
+use winapi::{
+    ctypes::c_void,
+    shared::minwindef::{BOOL, DWORD, HMODULE, LPVOID, TRUE},
+    um::{
+        libloaderapi::DisableThreadLibraryCalls,
+        winnt::DLL_PROCESS_ATTACH,
+        processthreadsapi::CreateThread,
+        wincon::SetConsoleTitleA,
+        winnt::{DLL_PROCESS_ATTACH},
+    },
+};
+
 mod vmt;
 mod utils;
 mod ion;
 
-use winapi::{
-    shared::minwindef::{HMODULE, DWORD, BOOL, LPVOID, TRUE},
-    um::{
-        libloaderapi::{DisableThreadLibraryCalls},
-        winnt::{DLL_PROCESS_ATTACH},
-        processthreadsapi::{CreateThread},
-        consoleapi::AllocConsole,
-        wincon::SetConsoleTitleA,
-    },
-    ctypes::c_void,
-};
-
-unsafe extern "system" fn dllmain_wrapped(module: *mut c_void) -> u32
+unsafe extern "system" fn dllmain_wrapped(_module: *mut c_void) -> u32
 {
     let res = std::panic::catch_unwind(|| {
         /* allocate a console */

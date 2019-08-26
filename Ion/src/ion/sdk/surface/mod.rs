@@ -41,20 +41,20 @@ impl Color {
     }
 }
 
-type set_drawing_color_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, r: i32, g: i32, b: i32, a: i32);
-type draw_filled_rect_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32, y: i32, x1: i32, y1: i32);
-type set_text_font_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, font: u32);
-type set_text_color_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, r: i32, color: Color);
-type set_text_pos_fn =  unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32, y: i32);
-type draw_print_text_fn =  unsafe extern "thiscall" fn(thisptr: *mut usize, text: *const u16, len: i32);
-type draw_outlined_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32, y: i32, x1: i32, y1: i32);
+type SetDrawColorFn = unsafe extern "thiscall" fn(thisptr: *mut usize, r: i32, g: i32, b: i32, a: i32);
+type DrawFilledRectFn = unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32, y: i32, x1: i32, y1: i32);
+//type SetTextFontFn = unsafe extern "thiscall" fn(thisptr: *mut usize, font: u32);
+//type SetTextColorFn = unsafe extern "thiscall" fn(thisptr: *mut usize, r: i32, color: Color);
+type SetTextPosFn = unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32, y: i32);
+type DrawPrintTextFn = unsafe extern "thiscall" fn(thisptr: *mut usize, text: *const u16, len: i32);
+type DrawOutlinedRectFn = unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32, y: i32, x1: i32, y1: i32);
 
 #[derive(Debug)]
-pub struct c_surface {
+pub struct CSurface {
     pub base: *mut usize,
 }
 
-impl c_surface {
+impl CSurface {
     pub unsafe fn from_raw(addr: *mut usize) -> Self {
         Self {
             base: addr,
@@ -62,22 +62,27 @@ impl c_surface {
     }
 
     pub fn set_draw_color(&self, color: Color) {
-        let vfunc = unsafe { std::mem::transmute::<_, set_drawing_color_fn>(utils::native::get_virtual_function(self.base, 15))};
+        let vfunc = unsafe { std::mem::transmute::<_, SetDrawColorFn>(utils::native::get_virtual_function(self.base, 15)) };
         unsafe { vfunc(self.base, color.r, color.g, color.b, color.a); }
     }
 
     pub fn draw_filled_rect(&self, x: i32, y: i32, x1: i32, y1: i32) {
-        let vfunc = unsafe { std::mem::transmute::<_, draw_filled_rect_fn>(utils::native::get_virtual_function(self.base, 16))};
+        let vfunc = unsafe { std::mem::transmute::<_, DrawFilledRectFn>(utils::native::get_virtual_function(self.base, 16)) };
         unsafe { vfunc(self.base, x, y, x1, y1); }
     }
 
+    pub fn set_text_pos(&self, x: i32, y: i32) {
+        let vfunc = unsafe { std::mem::transmute::<_, SetTextPosFn>(utils::native::get_virtual_function(self.base, 26)) };
+        unsafe { vfunc(self.base, x, y); }
+    }
+
     pub fn draw_outlined_rect(&self, x: i32, y: i32, x1: i32, y1: i32) {
-        let vfunc = unsafe { std::mem::transmute::<_, draw_outlined_fn>(utils::native::get_virtual_function(self.base, 18)) };
+        let vfunc = unsafe { std::mem::transmute::<_, DrawOutlinedRectFn>(utils::native::get_virtual_function(self.base, 18)) };
         unsafe { vfunc(self.base, x, y, x1, y1); }
     }
 }
 
-impl Default for c_surface {
+impl Default for CSurface {
     fn default() -> Self {
         Self {
             base: std::ptr::null_mut(),

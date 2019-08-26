@@ -1,11 +1,10 @@
-
 use winapi::{
+    shared::minwindef::HMODULE,
     shared::minwindef::{HMODULE},
-    ctypes::{c_void, c_char, c_int},
 };
 
-use crate::utils;
 use crate::ion::sdk;
+use crate::utils;
 
 pub fn capture_interface(module: HMODULE, interface: *const u8) -> *const c_void {
     unsafe {
@@ -26,27 +25,27 @@ pub fn capture_interface(module: HMODULE, interface: *const u8) -> *const c_void
 
 #[derive(Debug)]
 pub struct Interfaces {
-    pub client: sdk::client::c_client,
+    pub client: sdk::client::CClient,
     pub client_mode: *mut usize,
-    pub vgui_surface: sdk::surface::c_surface,
-    pub vgui_panel: sdk::panel::c_panel,
-    pub entity_list: sdk::entitylist::c_entity_list,
-    pub engine: sdk::engine::c_engine,
-    pub glow_object_manager: *const sdk::glow::glow_object_manager_t,
-    pub debug_overlay: sdk::debugoverlay::c_debugoverlay,
+    pub vgui_surface: sdk::surface::CSurface,
+    pub vgui_panel: sdk::panel::CPanel,
+    pub entity_list: sdk::entitylist::CEntityList,
+    pub engine: sdk::engine::CEngine,
+    pub glow_object_manager: *const sdk::glow::CGlowObjectManager,
+    pub debug_overlay: sdk::debugoverlay::CDebugOverlay,
 }
 
 impl Default for Interfaces {
     fn default() -> Self {
         Self {
-            client: sdk::client::c_client::default(),
+            client: sdk::client::CClient::default(),
             client_mode: std::ptr::null_mut(),
-            engine: sdk::engine::c_engine::default(),
+            engine: sdk::engine::CEngine::default(),
             glow_object_manager: std::ptr::null_mut(),
-            vgui_panel: sdk::panel::c_panel::default(),
-            entity_list: sdk::entitylist::c_entity_list::default(),
-            vgui_surface: sdk::surface::c_surface::default(),
-            debug_overlay: sdk::debugoverlay::c_debugoverlay::default(),
+            vgui_panel: sdk::panel::CPanel::default(),
+            entity_list: sdk::entitylist::CEntityList::default(),
+            vgui_surface: sdk::surface::CSurface::default(),
+            debug_overlay: sdk::debugoverlay::CDebugOverlay::default(),
         }
     }
 }

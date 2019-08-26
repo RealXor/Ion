@@ -1,23 +1,15 @@
-use crate::vmt::*;
-use crate::utils;
-
 use std::fmt::Error;
 use std::sync::Mutex;
+
+use crate::utils;
+use crate::vmt::*;
 
 mod sdk;
 mod cheats;
 
-use winapi::shared::minwindef::DWORD;
-
-use std::os::raw::c_float;
-
-use std::sync::RwLock;
-use winapi::ctypes::c_void;
-use std::process::exit;
-
 lazy_static! {
-    pub static ref hooks: Mutex<Vec<VMT>> = Mutex::new(vec![]);
-    pub static ref interfaces: Mutex<sdk::interfaces::Interfaces> = Mutex::new(sdk::interfaces::Interfaces::default());
+    pub static ref HOOKS: Mutex<Vec<VMT>> = Mutex::new(vec![]);
+    pub static ref INTERFACES: Mutex<sdk::interfaces::Interfaces> = Mutex::new(sdk::interfaces::Interfaces::default());
 }
 
 pub fn start() {
@@ -37,21 +29,21 @@ pub fn start() {
         let vgui_surface = sdk::interfaces::capture_interface(vgui_factory, b"VGUI_Surface031\0".as_ptr()) as *mut usize;
         let debug_overlay = sdk::interfaces::capture_interface(engine_factory, b"VDebugOverlay004\0".as_ptr()) as *mut usize;
 
-        let glow_object_manager: *const sdk::glow::glow_object_manager_t = *(res as *mut *mut usize) as _;
+        let glow_object_manager: *const sdk::glow::CGlowObjectManager = *(res as *mut *mut usize) as _;
 
         /* yikes */
         let client_mode = **(((*((*(client as *mut *mut usize)).offset(10))) + 5) as *mut *mut *mut usize);
 
-        interfaces.lock().unwrap().client = sdk::client::c_client::from_raw(client);
-        interfaces.lock().unwrap().client_mode = client_mode;
-        interfaces.lock().unwrap().engine = sdk::engine::c_engine::from_raw(engine);
-        interfaces.lock().unwrap().vgui_panel = sdk::panel::c_panel::from_raw(vgui_panel);
-        interfaces.lock().unwrap().vgui_surface = sdk::surface::c_surface::from_raw(vgui_surface);
-        interfaces.lock().unwrap().entity_list = sdk::entitylist::c_entity_list::from_raw(entity_list);
-        interfaces.lock().unwrap().debug_overlay = sdk::debugoverlay::c_debugoverlay::from_raw(debug_overlay);
-        interfaces.lock().unwrap().glow_object_manager = glow_object_manager;
+        INTERFACES.lock().unwrap().client = sdk::client::CClient::from_raw(client);
+        INTERFACES.lock().unwrap().client_mode = client_mode;
+        INTERFACES.lock().unwrap().engine = sdk::engine::CEngine::from_raw(engine);
+        INTERFACES.lock().unwrap().vgui_panel = sdk::panel::CPanel::from_raw(vgui_panel);
+        INTERFACES.lock().unwrap().vgui_surface = sdk::surface::CSurface::from_raw(vgui_surface);
+        INTERFACES.lock().unwrap().entity_list = sdk::entitylist::CEntityList::from_raw(entity_list);
+        INTERFACES.lock().unwrap().debug_overlay = sdk::debugoverlay::CDebugOverlay::from_raw(debug_overlay);
+        INTERFACES.lock().unwrap().glow_object_manager = glow_object_manager;
 
-        println!("{:?}", interfaces.lock().unwrap());
+        println!("{:?}", INTERFACES.lock().unwrap());
 
         sdk::hook::hook();
         sdk::netvar::initialize();

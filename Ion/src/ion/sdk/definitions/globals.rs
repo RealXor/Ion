@@ -1,7 +1,7 @@
 use std::os::raw::c_void;
 
 #[repr(C)]
-pub struct c_globalvars {
+pub struct CGlobalVars {
     pub realtime: f32,
     pub frame_count: i32,
     pub absolute_frame_time: f32,

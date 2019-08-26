@@ -1,24 +1,21 @@
-use std::ffi::{CStr, CString};
 use std::intrinsics::transmute;
-use std::os::raw::c_char;
 
 use crate::ion::sdk::netvar;
 use crate::utils::math;
-use crate::utils::math::vec::{Matrix, Vec3};
+use crate::utils::math::vec::Vec3;
 use crate::utils::native::get_virtual_function;
 
 #[derive(Copy, Clone)]
-pub struct c_entity {
+pub struct CEntity {
     base: *mut usize,
 }
 
-type is_player_fn = unsafe extern "thiscall" fn(thisptr: *mut usize) -> bool;
-type setup_bones_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, out: *mut Matrix, max_bones: i32, mask: i32, time: f32) -> bool;
+type IsPlayerFn = unsafe extern "thiscall" fn(thisptr: *mut usize) -> bool;
 
 /// Note:
 ///     offsets are hardcoded as of 22/8/19
 ///     I need to get to it, calm down
-impl c_entity {
+impl CEntity {
 
     pub fn get_value<T>(&self, offset: usize) -> T {
         unsafe {
@@ -64,18 +61,13 @@ impl c_entity {
         self.get_value(netvar::get_offset("DT_BasePlayer", "m_vecVelocity"))
     }
 
-    pub fn get_name(&self) -> String {
-        let name: [c_char; 260] = self.get_value(netvar::get_offset("DT_BasePlayer", "m_iName"));
-        unsafe { CStr::from_ptr(name.as_ptr()).to_str().unwrap().to_owned() }
-    }
-
     pub fn is_dormant(&self) -> bool {
         self.get_value(0xED)
     }
 
     pub fn is_player(&self) -> bool {
         unsafe {
-            transmute::<_, is_player_fn>(get_virtual_function(self.base, 155))(self.base)
+            transmute::<_, IsPlayerFn>(get_virtual_function(self.base, 155))(self.base)
         }
     }
 
@@ -85,10 +77,6 @@ impl c_entity {
 
     pub fn is_alive(&self) -> bool {
         self.get_life_state() == 0
-    }
-
-    pub fn get_animating(&self) -> *mut usize {
-        self.get_value(0x4)
     }
 
     pub fn get_bone_pos(&self, bone: i32) -> Vec3 {
