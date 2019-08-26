@@ -14,10 +14,10 @@ use winapi::{
     ctypes::c_void,
     shared::minwindef::{BOOL, DWORD, HMODULE, LPVOID, TRUE},
     um::{
+        consoleapi::AllocConsole,
         libloaderapi::DisableThreadLibraryCalls,
-        winnt::DLL_PROCESS_ATTACH,
         processthreadsapi::CreateThread,
-        wincon::SetConsoleTitleA,
+        winnt::DLL_PROCESS_ATTACH,
         winnt::{DLL_PROCESS_ATTACH},
     },
 };

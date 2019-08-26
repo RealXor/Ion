@@ -1,7 +1,7 @@
 use winapi::{
     shared::minwindef::HMODULE,
-    shared::minwindef::{HMODULE},
 };
+use winapi::ctypes::{c_char, c_int, c_void};
 
 use crate::ion::sdk;
 use crate::utils;
