@@ -23,6 +23,10 @@ impl CEntity {
         }
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.base.is_null()
+    }
+
     pub unsafe fn from_raw(base: *mut usize) -> Self {
         Self {
             base,

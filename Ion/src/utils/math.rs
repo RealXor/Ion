@@ -5,14 +5,15 @@ use std::intrinsics::sqrtf32;
 */
 
 pub mod vec;
+pub mod matrix;
 
 pub fn normalize(vector: &mut vec::Vec3) {
     let wrap = |mut value: f32| -> f32 {
-        while value < -180 as f32 {
-            value += 360 as f32;
+        while value < -180.0 {
+            value += 360.0;
         }
-        while value > 180 as f32 {
-            value -= 360 as f32;
+        while value > 180.0 {
+            value -= 360.0;
         }
 
         value
@@ -24,19 +25,19 @@ pub fn normalize(vector: &mut vec::Vec3) {
 }
 
 pub fn clamp(vector: &mut vec::Vec3) {
-    if vector.y > 180 as f32 {
-        vector.y = 180 as f32;
-    } else if vector.y < -180 as f32 {
-        vector.y = -180 as f32;
+    if vector.y > 180.0 {
+        vector.y = 180.0;
+    } else if vector.y < -180.0 {
+        vector.y = -180.0;
     }
 
-    if vector.x > 89 as f32 {
-        vector.x = 89 as f32;
-    } else if vector.x < -89 as f32 {
-        vector.x = -89 as f32;
+    if vector.x > 89.0 {
+        vector.x = 89.0;
+    } else if vector.x < -89.0 {
+        vector.x = -89.0;
     }
 
-    vector.z = 0 as f32;
+    vector.z = 0.0;
 }
 
 pub fn calc_angle(source: vec::Vec3, dest: vec::Vec3) -> vec::Vec3 {
@@ -44,14 +45,14 @@ pub fn calc_angle(source: vec::Vec3, dest: vec::Vec3) -> vec::Vec3 {
         let mut res = vec::Vec3::empty();
         let delta = source - dest;
 
-        let hyp = sqrtf32(delta.x * delta.x + delta.y * delta.y);
+        let hyp = (delta.x * delta.x + delta.y * delta.y).sqrt();
 
         res.x = f32::to_degrees(f32::atan(delta.z / hyp));
         res.y = f32::to_degrees(f32::atan(delta.y / delta.x));
-        res.z = 0 as f32;
+        res.z = 0.0;
 
         if delta.x >= 0.0 {
-            res.y += 180 as f32;
+            res.y += 180.0;
         }
 
         res

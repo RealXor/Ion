@@ -34,16 +34,18 @@ pub fn start() {
         /* yikes */
         let client_mode = **(((*((*(client as *mut *mut usize)).offset(10))) + 5) as *mut *mut *mut usize);
 
-        INTERFACES.lock().unwrap().client = sdk::client::CClient::from_raw(client);
-        INTERFACES.lock().unwrap().client_mode = client_mode;
-        INTERFACES.lock().unwrap().engine = sdk::engine::CEngine::from_raw(engine);
-        INTERFACES.lock().unwrap().vgui_panel = sdk::panel::CPanel::from_raw(vgui_panel);
-        INTERFACES.lock().unwrap().vgui_surface = sdk::surface::CSurface::from_raw(vgui_surface);
-        INTERFACES.lock().unwrap().entity_list = sdk::entitylist::CEntityList::from_raw(entity_list);
-        INTERFACES.lock().unwrap().debug_overlay = sdk::debugoverlay::CDebugOverlay::from_raw(debug_overlay);
-        INTERFACES.lock().unwrap().glow_object_manager = glow_object_manager;
+        let mut interfaces = INTERFACES.lock().unwrap();
 
-        println!("{:?}", INTERFACES.lock().unwrap());
+        interfaces.client = sdk::client::CClient::from_raw(client);
+        interfaces.client_mode = client_mode;
+        interfaces.engine = sdk::engine::CEngine::from_raw(engine);
+        interfaces.vgui_panel = sdk::panel::CPanel::from_raw(vgui_panel);
+        interfaces.vgui_surface = sdk::surface::CSurface::from_raw(vgui_surface);
+        interfaces.entity_list = sdk::entitylist::CEntityList::from_raw(entity_list);
+        interfaces.debug_overlay = sdk::debugoverlay::CDebugOverlay::from_raw(debug_overlay);
+        interfaces.glow_object_manager = glow_object_manager;
+
+        println!("{:?}", interfaces);
 
         sdk::hook::hook();
         sdk::netvar::initialize();

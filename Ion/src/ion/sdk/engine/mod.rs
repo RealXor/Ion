@@ -35,15 +35,11 @@ impl CEngine {
     }
 
     pub fn get_local_player(&self) -> i32 {
-        unsafe {
-            transmute::<_, GetLocalPlayerFn>(utils::native::get_virtual_function(self.base, 12))(self.base)
-        }
+        unsafe { transmute::<_, GetLocalPlayerFn>(utils::native::get_virtual_function(self.base, 12))(self.base) }
     }
 
     pub fn execute_client_cmd(&self, cmd: *const u8) {
-        unsafe {
-            transmute::<_, ExecuteCmdFn>(utils::native::get_virtual_function(self.base, 108))(self.base, cmd);
-        }
+        unsafe { transmute::<_, ExecuteCmdFn>(utils::native::get_virtual_function(self.base, 108))(self.base, cmd); }
     }
 }
 

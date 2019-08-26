@@ -1,36 +1,27 @@
+use std::i32;
+use std::str;
 
 /**
     Signature utilities
 */
 
 use winapi::{
-    shared::minwindef::{HMODULE, DWORD},
-    um::winnt::{PIMAGE_DOS_HEADER, PIMAGE_NT_HEADERS},
     ctypes::{c_char, c_long},
+    shared::minwindef::{DWORD, HMODULE},
+    um::winnt::{PIMAGE_DOS_HEADER, PIMAGE_NT_HEADERS},
 };
 
-use std::str;
-use std::i32;
-
+/// I'm tired, I'll fix this later
 fn pattern_to_bytes(pattern: String) -> Vec<i32> {
-    let mut res = vec![];
-
-    let pattern_replaced = pattern.replace(' ', "");
-    let subs = pattern_replaced.as_bytes()
+    pattern.replace(' ', "").as_bytes()
         .chunks(2)
         .map(str::from_utf8)
         .collect::<Result<Vec<&str>, _>>()
-        .unwrap();
-
-    subs.into_iter().for_each(|q| {
-        if q.contains('?') {
-            res.push(-1);
-        } else {
-            res.push(i32::from_str_radix(q, 16).unwrap());
-        }
-    });
-
-    res
+        .unwrap()
+        .into_iter()
+        .filter(|&q| !q.contains('?'))
+        .map(|q| { i32::from_str_radix(q, 16).unwrap() })
+        .collect::<Vec<i32>>()
 }
 
 pub fn pattern_scan(module: HMODULE, sig: &str) -> *mut u8 {

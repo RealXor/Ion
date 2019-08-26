@@ -16,9 +16,11 @@ type PaintTraverseFn = unsafe extern "fastcall" fn(exc: *const c_void, edx: *con
 pub fn hook() {
     let add_vmt = |vmt: VMT| { HOOKS.lock().unwrap().push(vmt); };
 
-    let mut client_mode_vmt = VMT::new(INTERFACES.lock().unwrap().client_mode);
-    let mut client_vmt = VMT::new(INTERFACES.lock().unwrap().client.base);
-    let mut panel_vmt = VMT::new(INTERFACES.lock().unwrap().vgui_panel.base);
+    let interfaces = INTERFACES.lock().unwrap();
+
+    let mut client_mode_vmt = VMT::new(interfaces.client_mode);
+    let mut client_vmt = VMT::new(interfaces.client.base);
+    let mut panel_vmt = VMT::new(interfaces.vgui_panel.base);
 
     client_mode_vmt.hook(24, create_move as _);
     client_vmt.hook(37, fsn as _);
@@ -52,8 +54,10 @@ unsafe extern "fastcall" fn paint_traverse(exc: *const c_void, edx: *const c_voi
     // Will be implemented later for no scope
     static mut PANEL_HUD_ID: u32 = 0;
 
+    let interfaces = INTERFACES.lock().unwrap();
+
     if PANEL_HUD_ID == 0 {
-        let panel_name = INTERFACES.lock().unwrap().vgui_panel.get_panel_name(panel);
+        let panel_name = interfaces.vgui_panel.get_panel_name(panel);
 
         let c_str = CStr::from_ptr(panel_name);
         let string = c_str.to_str().unwrap();
@@ -64,7 +68,7 @@ unsafe extern "fastcall" fn paint_traverse(exc: *const c_void, edx: *const c_voi
     }
 
     if PANEL_ID == 0 {
-        let panel_name = INTERFACES.lock().unwrap().vgui_panel.get_panel_name(panel);
+        let panel_name = interfaces.vgui_panel.get_panel_name(panel);
 
         let c_str = CStr::from_ptr(panel_name);
         let string = c_str.to_str().unwrap();

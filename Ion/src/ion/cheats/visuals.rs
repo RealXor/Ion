@@ -11,8 +11,7 @@ pub fn draw_visuals() {
 
     let local = local_optional.unwrap().to_owned();
 
-    for player_ref in get_all_players().iter_mut() {
-        let player = *player_ref;
+    for player in get_all_players() {
 
         if local.get_team_num() == player.get_team_num() {
             continue;
@@ -34,15 +33,16 @@ pub fn draw_visuals() {
         let h: i32 = height;
 
         draw_box(x1, y1, w, h, Color::new_rgb(255, 0, 0));
-
     }
 }
 
 fn draw_box(x: i32, y: i32, w: i32, h: i32, clr: Color) {
-    INTERFACES.lock().unwrap().vgui_surface.set_draw_color(clr);
-    INTERFACES.lock().unwrap().vgui_surface.draw_outlined_rect(x, y, x + w, y + h);
+    let interfaces = INTERFACES.lock().unwrap();
 
-    INTERFACES.lock().unwrap().vgui_surface.set_draw_color(Color::new_rgb(0, 0, 0));
-    INTERFACES.lock().unwrap().vgui_surface.draw_outlined_rect(x - 1, y - 1, x + w + 1, y + h + 1);
-    INTERFACES.lock().unwrap().vgui_surface.draw_outlined_rect(x + 1, y + 1, x + w - 1, y + h - 1);
+    interfaces.vgui_surface.set_draw_color(clr);
+    interfaces.vgui_surface.draw_outlined_rect(x, y, x + w, y + h);
+
+    interfaces.vgui_surface.set_draw_color(Color::new_rgb(0, 0, 0));
+    interfaces.vgui_surface.draw_outlined_rect(x - 1, y - 1, x + w + 1, y + h + 1);
+    interfaces.vgui_surface.draw_outlined_rect(x + 1, y + 1, x + w - 1, y + h - 1);
 }
