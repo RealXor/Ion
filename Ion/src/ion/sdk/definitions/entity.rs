@@ -1,10 +1,10 @@
-
-use crate::utils::math;
-use crate::ion::sdk::netvar;
-use std::os::raw::c_char;
-use std::ffi::{CString, CStr};
-use crate::utils::math::vec::{Vec3, Matrix};
+use std::ffi::{CStr, CString};
 use std::intrinsics::transmute;
+use std::os::raw::c_char;
+
+use crate::ion::sdk::netvar;
+use crate::utils::math;
+use crate::utils::math::vec::{Matrix, Vec3};
 use crate::utils::native::get_virtual_function;
 
 #[derive(Copy, Clone)]
@@ -13,7 +13,7 @@ pub struct c_entity {
 }
 
 type is_player_fn = unsafe extern "thiscall" fn(thisptr: *mut usize) -> bool;
-type setup_bones_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, out: &mut [Matrix], max_bones: i32, mask: i32, time: f32) -> bool;
+type setup_bones_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, out: *mut Matrix, max_bones: i32, mask: i32, time: f32) -> bool;
 
 /// Note:
 ///     offsets are hardcoded as of 22/8/19
@@ -69,23 +69,36 @@ impl c_entity {
         unsafe { CStr::from_ptr(name.as_ptr()).to_str().unwrap().to_owned() }
     }
 
+    pub fn is_dormant(&self) -> bool {
+        self.get_value(0xED)
+    }
+
     pub fn is_player(&self) -> bool {
         unsafe {
             transmute::<_, is_player_fn>(get_virtual_function(self.base, 155))(self.base)
         }
     }
 
-    pub fn get_bone_matrix(&self) -> usize {
-        self.get_value(netvar::get_offset("DT_BaseAnimating", "m_nForceBone") + 0x1C)
+    pub fn get_life_state(&self) -> i32 {
+        self.get_value(netvar::get_offset("DT_BasePlayer", "m_lifeState"))
+    }
+
+    pub fn is_alive(&self) -> bool {
+        self.get_life_state() == 0
+    }
+
+    pub fn get_animating(&self) -> *mut usize {
+        self.get_value(0x4)
     }
 
     pub fn get_bone_pos(&self, bone: i32) -> Vec3 {
-        let matrix = self.get_bone_matrix();
-        self.get_value((matrix + bone as usize) * 0x30)
-    }
+        let ptr: *mut usize = self.get_value(0x26a8);
 
-    /// need to fix this
-    pub fn setup_bones(&self, max_bones: i32, mask: i32, time: f32) -> Option<&[Matrix]> {
-        None
+        let x = unsafe { *((ptr as usize + (bone as usize * 48 + 12)) as *mut f32) };
+        let y = unsafe { *((ptr as usize + (bone as usize * 48 + 28)) as *mut f32) };
+        let z = unsafe { *((ptr as usize + (bone as usize * 48 + 44)) as *mut f32) };
+
+        Vec3::new(x, y, z)
+
     }
 }

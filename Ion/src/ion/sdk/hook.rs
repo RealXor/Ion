@@ -1,3 +1,8 @@
+use std::os::raw::{c_float, c_void};
+
+use crate::ion::*;
+use crate::ion::sdk::get_local_player;
+use crate::ion::sdk::surface::Color;
 /// NOTE:
 ///     The use of "system" or "fastcall" is NOT arbitrary, in fact the reason of use for
 ///     fastcall in example the FSN hook, is because we might need to access the registers
@@ -5,11 +10,6 @@
 
 
 use crate::vmt::*;
-use crate::ion::*;
-
-use std::os::raw::{c_float, c_void};
-use crate::ion::sdk::surface::Color;
-use crate::ion::sdk::get_local_player;
 
 type createmove_t    = unsafe extern "fastcall" fn(ecx: *const c_void, edx: *const c_void, _sampleframetime: c_float, *const sdk::definitions::cusercmd::c_usercmd) -> bool;
 type fsn_t           = unsafe extern "fastcall" fn(ecx: *const c_void, edx: *const c_void, stage: i32);
@@ -36,12 +36,6 @@ unsafe extern "fastcall" fn create_move(ecx: *const c_void, edx: *const c_void, 
     if cmd.is_null() || cmd.read().command_number == 0 || !interfaces.lock().unwrap().engine.is_ingame()
         || !interfaces.lock().unwrap().engine.is_connected() {
         return std::mem::transmute::<_, createmove_t>(hooks.lock().unwrap()[0].get_original(24))(ecx, edx, _sampleframetime, cmd);
-    }
-
-    let player = get_local_player();
-
-    if player.is_some() {
-        println!("{:?}", player.unwrap().get_bone_pos(8))
     }
 
     false
@@ -89,7 +83,7 @@ unsafe extern "fastcall" fn paint_traverse(exc: *const c_void, edx: *const c_voi
 
     // Top panel, so that we can draw :)
     if PANEL_ID == panel {
-        interfaces.lock().unwrap().vgui_surface.set_draw_color(Color::new_rgb(255, 0,0));
-        interfaces.lock().unwrap().vgui_surface.draw_filled_rect(0, 0, 50, 100);
+        // DRAW
+        cheats::visuals::draw_visuals();
     }
 }

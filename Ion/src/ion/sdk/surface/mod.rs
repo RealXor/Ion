@@ -1,6 +1,6 @@
+use std::os::raw::c_int;
 
 use crate::utils;
-use std::os::raw::{c_int};
 
 pub enum EFontFlags
 {
@@ -47,6 +47,7 @@ type set_text_font_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, font: u
 type set_text_color_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, r: i32, color: Color);
 type set_text_pos_fn =  unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32, y: i32);
 type draw_print_text_fn =  unsafe extern "thiscall" fn(thisptr: *mut usize, text: *const u16, len: i32);
+type draw_outlined_fn = unsafe extern "thiscall" fn(thisptr: *mut usize, x: i32, y: i32, x1: i32, y1: i32);
 
 #[derive(Debug)]
 pub struct c_surface {
@@ -67,6 +68,11 @@ impl c_surface {
 
     pub fn draw_filled_rect(&self, x: i32, y: i32, x1: i32, y1: i32) {
         let vfunc = unsafe { std::mem::transmute::<_, draw_filled_rect_fn>(utils::native::get_virtual_function(self.base, 16))};
+        unsafe { vfunc(self.base, x, y, x1, y1); }
+    }
+
+    pub fn draw_outlined_rect(&self, x: i32, y: i32, x1: i32, y1: i32) {
+        let vfunc = unsafe { std::mem::transmute::<_, draw_outlined_fn>(utils::native::get_virtual_function(self.base, 18)) };
         unsafe { vfunc(self.base, x, y, x1, y1); }
     }
 }
